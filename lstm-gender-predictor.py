@@ -1,6 +1,6 @@
 from keras.models import Sequential
 from keras.layers.core import Dense, Activation, Dropout
-from keras.layers.recurrent import LSTM
+from keras.layers import LSTM, CuDNNLSTM
 import wandb
 from wandb.keras import WandbCallback
 
@@ -62,13 +62,13 @@ def vec2c(vec):
 	return ""
 
 model = Sequential()
-model.add(LSTM(512, return_sequences=True, input_shape=(maxlen, len(chars))))
-model.add(Dropout(0.2))
-model.add(LSTM(512, return_sequences=False))
-model.add(Dropout(0.2))
+model.add(CuDNNLSTM(64, return_sequences=True, input_shape=(maxlen, len(chars))))
+model.add(Dropout(0.3))
+model.add(CuDNNLSTM(64, return_sequences=False))
+model.add(Dropout(0.3))
 model.add(Dense(2, activation='softmax'))
 
-model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
+model.compile(loss='categorical_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
-model.fit(X, y,validation_split=0.2, callbacks=[WandbCallback()])
+model.fit(X, y, epochs= config.epochs,validation_split=0.2, callbacks=[WandbCallback()])
 

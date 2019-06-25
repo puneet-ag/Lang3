@@ -1,7 +1,7 @@
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Activation
-from keras.layers import LSTM, SimpleRNN, GRU
+from keras.layers import LSTM, SimpleRNN, GRU, CuDNNLSTM
 from keras.optimizers import RMSprop
 from keras.utils.data_utils import get_file
 import numpy as np
@@ -14,6 +14,7 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument("text", type=str)
+#parser.add_argument("batch_size", type=int)
 
 args = parser.parse_args()
 
@@ -24,6 +25,7 @@ config.batch_size = 256
 config.file = args.text
 config.maxlen = 200
 config.step = 3
+#config.batch_size = args.batch_size
 
 text = io.open(config.file, encoding='utf-8').read()
 chars = sorted(list(set(text)))
@@ -50,7 +52,7 @@ for i, sentence in enumerate(sentences):
     y[i, char_indices[next_chars[i]]] = 1
 
 model = Sequential()
-model.add(SimpleRNN(128, input_shape=(config.maxlen, len(chars))))
+model.add(CuDNNLSTM(128, input_shape=(config.maxlen, len(chars))))
 model.add(Dense(len(chars), activation='softmax'))
 model.compile(loss='categorical_crossentropy', optimizer="rmsprop")
 

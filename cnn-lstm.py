@@ -1,8 +1,8 @@
 from keras.preprocessing import sequence
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation
-from keras.layers import Embedding, LSTM
-from keras.layers import Conv1D, Flatten
+from keras.layers import Embedding, LSTM, CuDNNLSTM
+from keras.layers import Conv1D, Flatten, MaxPooling1D
 from keras.datasets import imdb
 import wandb
 from wandb.keras import WandbCallback
@@ -42,7 +42,7 @@ model.add(Conv1D(config.filters,
                  padding='valid',
                  activation='relu'))
 model.add(MaxPooling1D())
-model.add(LSTM(config.hidden_dims, activation="sigmoid"))
+model.add(CuDNNLSTM(config.hidden_dims))
 model.add(Dense(1, activation='sigmoid'))
 model.compile(loss='binary_crossentropy',
               optimizer='rmsprop',

@@ -23,7 +23,7 @@ config.embedding_dims = 50
 config.filters = 250
 config.kernel_size = 3
 config.hidden_dims = 100
-config.epochs = 10
+config.epochs = 20
 
 (X_train, y_train), (X_test, y_test) = imdb.load_imdb()
 
